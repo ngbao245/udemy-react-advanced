@@ -5,6 +5,8 @@ import BookPage from "./pages/book";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import Home from "./components/home";
+import RegisterPage from "./pages/register";
+import LoginPage from "./pages/login";
 
 const Layout = () => {
   return (
@@ -32,6 +34,14 @@ export default function App() {
         {
           path: "book",
           element: <BookPage />,
+        },
+        {
+          path: "login",
+          element: <LoginPage />,
+        },
+        {
+          path: "register",
+          element: <RegisterPage />,
         },
       ],
     },
