@@ -15,12 +15,12 @@ instance.interceptors.request.use(
   }
 );
 
-axios.interceptors.response.use(
+instance.interceptors.response.use(
   function (response) {
-    return response;
+    return response && response.data ? response.data : response;
   },
   function (error) {
-    return Promise.reject(error);
+    return error?.response?.data ?? Promise.reject(error);
   }
 );
 

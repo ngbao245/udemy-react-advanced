@@ -7,6 +7,7 @@ import Footer from "./components/footer";
 import Home from "./components/home";
 import RegisterPage from "./pages/register";
 import LoginPage from "./pages/login";
+import './styles/reset.scss';
 
 const Layout = () => {
   return (
