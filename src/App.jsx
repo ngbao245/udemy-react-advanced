@@ -9,10 +9,15 @@ import RegisterPage from "./pages/register";
 import LoginPage from "./pages/login";
 import "./styles/reset.scss";
 import { fetchAccount } from "./services/api";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { doGetAccountAction } from "./redux/account/accountSlice";
+import Loading from "./components/loading";
+import ErrorPage from "./pages/error";
+import AdminPage from "./pages/admin";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const Layout = () => {
+  console.log("admin");
   return (
     <div className="layout-app">
       <Header />
@@ -24,12 +29,18 @@ const Layout = () => {
 
 export default function App() {
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.account.isAuthenticated);
+
   const getAccount = async () => {
+    if (
+      window.location.pathname === "/login" ||
+      window.location.pathname === "/admin"
+    )
+      return;
     const res = await fetchAccount();
     if (res && res.data) {
       dispatch(doGetAccountAction(res.data));
     }
-    console.log("check fetch: ", res);
   };
   useEffect(() => {
     getAccount();
@@ -38,10 +49,43 @@ export default function App() {
     {
       path: "/",
       element: <Layout />,
-      errorElement: <div>404 not found</div>,
+      errorElement: <ErrorPage />,
 
       children: [
         { index: true, element: <Home /> },
+        {
+          path: "contact",
+          element: <ContactPage />,
+        },
+        {
+          path: "book",
+          element: <BookPage />,
+        },
+        {
+          path: "login",
+          element: <LoginPage />,
+        },
+        {
+          path: "register",
+          element: <RegisterPage />,
+        },
+      ],
+    },
+
+    {
+      path: "/admin",
+      element: <Layout />,
+      errorElement: <ErrorPage />,
+
+      children: [
+        {
+          index: true,
+          element: (
+            <ProtectedRoute>
+              <AdminPage />
+            </ProtectedRoute>
+          ),
+        },
         {
           path: "contact",
           element: <ContactPage />,
@@ -64,7 +108,13 @@ export default function App() {
 
   return (
     <>
-      <RouterProvider router={router} />
+      {isAuthenticated === true ||
+      window.location.pathname === "/login" ||
+      window.location.pathname === "/admin" ? (
+        <RouterProvider router={router} />
+      ) : (
+        <Loading />
+      )}
     </>
   );
 }
